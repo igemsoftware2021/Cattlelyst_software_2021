@@ -1,0 +1,48 @@
+!!SBtab	TableID='Reaction'	TableType='Reaction'
+!ID	!ReactionFormula
+faldh2	hmgth_c + nad_c <=> Sfglutth_c + h_c + nadh_c
+falgthls	fald_c + gthrd_c <=> hmgth_c
+sfgthi	Sfglutth_c + h2o_c <=> for_c + gthrd_c + h_c
+mmo2	ch4_c + o2_c + q8h2_c <=> h2o_c + meoh_c + q8_c
+alcd1	meoh_c + nad_c <=> fald_c + h_c + nadh_c
+
+!!SBtab	TableID='Compound'	TableType='Compound'
+!ID	!Identifiers
+hmgth_c	kegg:C14180
+nad_c	kegg:C00003
+Sfglutth_c	kegg:C01031
+h_c	kegg:C00080
+nadh_c	kegg:C00004
+fald_c	kegg:C00067
+gthrd_c	kegg:C00051
+h2o_c	kegg:C00001
+for_c	kegg:C00058
+ch4_c	kegg:C01438
+o2_c	kegg:C00007
+meoh_c	kegg:C00132
+q8_c	kegg:C17569
+
+!!SBtab	TableID='Flux'	TableType='Quantity'	:Unit='mM/s'
+!QuantityType	!Reaction	!Value
+rate of reaction	faldh2	1.0
+rate of reaction	falgthls	1.0
+rate of reaction	sfgthi	1.0
+rate of reaction	mmo2	1.0
+rate of reaction	alcd1	1.0
+
+!!SBtab	TableID='ConcentrationConstraint'	TableType='Quantity'	:Unit='mM'
+!QuantityType	!Compound	!Min	!Max
+concentration	hmgth_c	0.001	10
+concentration	nad_c	0.001	10
+concentration	Sfglutth_c	0.001	10
+concentration	h_c	0.001	10
+concentration	nadh_c	0.001	10
+concentration	fald_c	0.001	10
+concentration	gthrd_c	0.001	10
+concentration	h2o_c	0.001	10
+concentration	for_c	0.001	10
+concentration	ch4_c	1.247	8.105
+concentration	o2_c	0.001	10
+concentration	q8h2_c	0.001	10
+concentration	meoh_c	0.001	10
+concentration	q8_c	0.001	10

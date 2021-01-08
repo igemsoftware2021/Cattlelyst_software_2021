@@ -1,0 +1,5 @@
+constraints_consumption,constraints_production,balanced_equation,expression_host,host_model_ID
+#bounds of the biomass reactions and the exchange reaction of the substrate when doing reactions search for growth on the substrate,#bounds of the biomass reactions and the exchange reaction of the substrate when doing reactions search for production of the target,#balanced equation for the conversion of the substrate into the target product,"#name of the expression host species, ",#BiGG identifier of the expression host's model
+"Biomass_reaction=(0.0, 1.4319489943099062)","Biomass_reactions=(0.07159744971549488, 1.4319489943099062)",L-Arabinose(aq) + 2 NAD+(aq) ? 2-Ketoglutaric acid(aq) + 2 NADH(aq),Pseudomonas putida KT2440,iJN1463.xml
+"Substrate_uptake=(-1000, 0)","Substrate_uptake=(-10.0, 0)"
+---------------------------------------------

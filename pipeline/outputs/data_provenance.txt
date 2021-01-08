@@ -1,0 +1,26 @@
+Pipeline run at the following date and time:
+04/10/2020 18:28:27
+
+The input was:
+lac_209025.csv
+Path to file:
+pipeline/inputs/lac_209025.csv
+
+System network name:
+LAPTOP-PG6VN22I
+Platform information:
+Windows-10-10.0.18362-SP0
+
+Python version:
+3.6.10 |Anaconda, Inc.| (default, May  7 2020, 19:46:08) [MSC v.1916 64 bit (AMD64)]
+Cobrapy version:
+0.18.1
+Aside from this data_provenance.txt file,
+The following output files can be found 
+in the current repository (pipeline/ouptuts/<filename>):
+
+            - summary_output.csv
+            - detailed_output.csv
+            - consumption.csv
+            - metabolic_detailed_output.csv
+            - partof_summary_output.csv
