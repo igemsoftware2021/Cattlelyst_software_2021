@@ -18,7 +18,7 @@ Biotechnology is particularly suited for targeting two societal needs: _the degr
  The pipeline takes a user-filled template file indicating the specifics of the analysis as input.
 
 ### Flowchart
-![Pipeline Workflow](/workflow.png)
+![Pipeline Workflow](/pipeline/workflow.png)
 
 The pipeline's workflow is shown above.
 
