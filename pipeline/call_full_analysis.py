@@ -15,9 +15,7 @@ __status__ = "Development"
 import csv
 import argparse
 import sys
-
 import cobra
-
 from scripts.analysis import analysis_gf_sol, dict_prod_sol, cons_prod_dict
 from scripts.import_models import get_universal_main, get_reference_model
 from scripts.input_parser import main
@@ -30,6 +28,7 @@ from scripts.call_Optknock import (run_optknock_analysis, \
 from scripts.output_generation import (summary_output, metab_out_chain, 
                             write_data_provenance)
 
+from query_bioparts import query_bioparts
 
 def parse_options():
     """
@@ -98,7 +97,9 @@ def main_whole_analysis(argv):
     scores_output = scores_evaluations(inputs.input_file, consumption, final, optknock_analysis=False)
     # Formatting information for wikidata query   
     to_wikidata = output_for_biobrick_search(universal, scores_output, final)
-    # TODO: add call Riemer's script to get from_wiki    
+    # Retrieve from_wiki using query_bioparts function
+    from_wiki = query_bioparts(to_wikidata)
+
     # Score Biobrick presence
     ##scores_BB = score_BB_presence(inputs.input_file, to_wikidata, from_wiki, scores_output)
     # Plot scores for knock-ins engineering strategy 
