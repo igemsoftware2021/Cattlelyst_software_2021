@@ -24,7 +24,7 @@ from matplotlib import pyplot as plt
 
 from pipeline.scripts.analysis import *
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 def read_weights(input_file):
     """
@@ -214,7 +214,10 @@ def get_max_and_min_values(input_file, output_consumption, output_con_and_prod):
                     length = len(dict_KI)
                 else:
                     list_KI_cons = output_con_and_prod['consumption_'+str(n)][1][0]
-                    length = len(list_KI_cons)
+                    if list_KI_cons != None:
+                        length = len(list_KI_cons)
+                    else:
+                        length = 0
                 number_interventions.append(length) 
                 #for m in range(1, len(output_con_and_prod['production_'+str(n)])+1):
                 #    dict_KI = output_con_and_prod['production_'+str(n)]['lac__L_Run_'+str(m)][4]
@@ -344,7 +347,7 @@ def generate_scores(input_file, output_consumption, output_con_and_prod):
     ranges_per_criteria = generate_dict_ranges_per_criteria(ranges)
     logging.debug(ranges_per_criteria)
 
-    with open('pipeline/outputs/partof_summary_output.csv', 'w', newline='') as csvfile:
+    with open('/pipeline/outputs/partof_summary_output.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["model_name", 
                         "criteria", 

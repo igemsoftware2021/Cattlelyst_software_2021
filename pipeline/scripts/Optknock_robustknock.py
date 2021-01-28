@@ -42,7 +42,7 @@ from cobra.exceptions import Infeasible
 
 from pipeline.scripts.analysis import get_biomass_equation
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 # TO DO
 # Try accessing Cplex directly as alternative to OptSlope code 

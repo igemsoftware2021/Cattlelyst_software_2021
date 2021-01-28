@@ -21,12 +21,12 @@ from cobra.flux_analysis import phenotype_phase_plane
 from cobra.flux_analysis import gapfill
 import csv
 
-from pipeline.scripts.input_parser import main, get_metabolites, get_reactions
+from pipeline.scripts.input_parser import main, get_metabolites, get_reactions, set_bounds_ex
 from pipeline.scripts.path_definition_mdf import * 
 from pipeline.scripts.import_models import get_ID_reference_model, get_expression_host
 
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 #import warnings
 
 #warnings.filterwarnings('error', category=UserWarning, module='analysis.py')
@@ -154,6 +154,9 @@ def get_max_growth_on_preferred_c(input_file, model):
         model.objective = biomass
         logging.debug(type(model.solver))
         fba_pref_source = model.optimize()
+        for i in model.reactions:
+            if i.flux <= -0.5 and "EX_" in i.id:
+                print(i.id, i.reaction, i.flux)
         ub_biomass = fba_pref_source.objective_value
         logging.debug(ub_biomass)
         uptake_reaction.lower_bound = 0
@@ -176,6 +179,7 @@ def set_bounds_obj(input_file, model):
     model--cobra.Model reference model in BiGG namespace
     """
     biomass = get_biomass_equation(model) 
+    metabolites = get_metabolites(input_file)
     with open(input_file, newline='', encoding='utf-8-sig') as csvfile:
         reader = csv.DictReader(csvfile, dialect='excel')
         #metabolites = get_metabolites(input_file)
@@ -192,6 +196,30 @@ def set_bounds_obj(input_file, model):
         #        elif metab in row['metabolite_BiGG_ID'] and row['carbon_source']=='yes' and row['consumption']!='yes' and row['consumption']!='no':
         #            continue 
         print('New biomass (objective) bounds = ', biomass.bounds)
+        #TODO: remove the setting of the lb of the selected C to -1000 from input_parser (set_bounds_ex) and set the bounds in here
+        for i in metabolites:
+
+            if ('EX_' + i + '_e') in model.reactions:
+                print('\n{} is in the medium'.format(i), '\n')
+            elif ('EX_' + i + '_e') not in model.reactions:
+                print('\n{} is not in the medium'.format(i), '\n')
+                if ('EX_' + i + '_e') in universal.reactions:
+                    exchange = universal.reactions.get_by_id('EX_' + i + '_e')
+                    exchange.lower_bound = -1000
+                    exchange.upper_bound = 0
+                    model.add_reaction(exchange)
+                else:
+                    extracellular = Metabolite(i + '_e')
+                    extracellular = Metabolite(i + '_e', name='extracellular' + i, compartment='e')
+                    exch = Reaction('EX_' + i + '_e')
+                    exch.name = 'Exchange {}'.format(extracellular)
+                    exch.lower_bound = -1000
+                    exch.upper_bound = 0
+                    exch.add_metabolites({extracellular: -1})
+                    model.add_reaction(exch)
+                    print('Ther reaction {} has been added to the reference model, hence {} is now in the medium'.format(
+                            'EX_' + i + '_e', i + '_e'))
+            set_bounds_ex(input_file, model, i)
 
 def iter_gf(input_file, model, universal):
     """
@@ -551,7 +579,7 @@ def analysis_gf_sol(input_file, model, universal):
         print(r.id, " | ", r.reaction, " | ", r.bounds)
     
     set_bounds_obj(input_file, model) # Onyl biomass is constrained by setting ub = growth on preferred substrate
-    shut_down_c_sources(input_file, model)
+    #shut_down_c_sources(input_file, model)
     output = eval_sol(input_file, model, universal)
     sol_for_csv = remove_duplicated_sol(output)
     generate_output_file(sol_for_csv)

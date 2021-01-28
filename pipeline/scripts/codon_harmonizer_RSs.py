@@ -38,7 +38,7 @@ import Bio.SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 re_atcg = re.compile("[ATUCG]", re.IGNORECASE)
 
 #added by Delielena Poli in date 09/09/2020

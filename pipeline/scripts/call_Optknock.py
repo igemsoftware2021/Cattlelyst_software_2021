@@ -34,7 +34,7 @@ from pipeline.scripts.analysis import (remove_rlist, get_biomass_equation,
                     get_ex_c_source_metab, get_production_objectives)
 
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 def add_Optknock_to_analysis(input_file): # new function added by Delielena Poli in date 23/09/2020
     """

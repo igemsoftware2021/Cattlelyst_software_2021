@@ -16,7 +16,7 @@ from cobra import Model, Reaction, Metabolite
 import csv
 import sys
 import logging
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 
 def get_metabolites(input_file):
@@ -424,29 +424,7 @@ def main(input_file, universal, model):
         reader = csv.DictReader(csvfile, dialect='excel')
         metabolites = get_metabolites(input_file)  # Function
         # check if the metabolites is in the medium and if not add exchange
-        for i in metabolites:
-
-            if ('EX_' + i + '_e') in model.reactions:
-                print('\n{} is in the medium'.format(i), '\n')
-            elif ('EX_' + i + '_e') not in model.reactions:
-                print('\n{} is not in the medium'.format(i), '\n')
-                if ('EX_' + i + '_e') in universal.reactions:
-                    exchange = universal.reactions.get_by_id('EX_' + i + '_e')
-                    exchange.lower_bound = -1000
-                    exchange.upper_bound = 0
-                    model.add_reaction(exchange)
-                else:
-                    extracellular = Metabolite(i + '_e')
-                    extracellular = Metabolite(i + '_e', name='extracellular' + i, compartment='e')
-                    exch = Reaction('EX_' + i + '_e')
-                    exch.name = 'Exchange {}'.format(extracellular)
-                    exch.lower_bound = -1000
-                    exch.upper_bound = 0
-                    exch.add_metabolites({extracellular: -1})
-                    model.add_reaction(exch)
-                    print('Ther reaction {} has been added to the reference model, hence {} is now in the medium'.format(
-                            'EX_' + i + '_e', i + '_e'))
-            set_bounds_ex(input_file, model, i)
+        
             #elif row['production'] != "":
                 
                 #if ('EX_' + i + '_e') in model.reactions:
