@@ -28,9 +28,9 @@ from cobra.util.solver import check_solver_status
 from cobra.exceptions import (
     OPTLANG_TO_EXCEPTIONS_DICT, Infeasible, OptimizationError, SolverNotFound)
  
-from pipeline.scripts.call_Optknock_robustknock import list_excluded_reactions                 
-from pipeline.scripts.Optknock_robustknock import Run_OptKnock
-from pipeline.scripts.analysis import (remove_rlist, get_biomass_equation, 
+from scripts.call_Optknock_robustknock import list_excluded_reactions                 
+from scripts.Optknock_robustknock import Run_OptKnock
+from scripts.analysis import (remove_rlist, get_biomass_equation, 
                     get_ex_c_source_metab, get_production_objectives)
 
 
@@ -82,47 +82,30 @@ def run_optknock_analysis(output_consumption, output_con_and_prod, model, univer
         print('---------'+str(n)+'---------')
         result_opt = {}
         for key, values in output_con_and_prod['production_'+str(n)].items():
-            if type(values) != dict:
-                KI_model = values[7]
-                #for exchange, flux in values[3].items():
-                #    target = exchange
-                #KI_list = []
-                #for i in KI.keys():
-                #    KI_list.append(i)
-                #    r = universal.reactions.get_by_id(i)
-                #    model.add_reaction(r)
-                #logging.debug(KI_list)
-                for exchange, flux in values[3].items():
-                    target = exchange
-                opt = []
-                j=1
-                dict_per_key = {}
-                while j <= 6:
-                    print('Running OptKnock . . .')
-                    knock, info_dictionary = Run_OptKnock(KI_model,target, j, KO_cand = candidates, verbose=True)
-                    opt += [knock] # it should already print stuff but I want also to recod the info in a dictionary/model
-                    dict_per_key[j] = info_dictionary
-                    print(dict_per_key)
-                    j = j+1
-                result_opt[str(n)+'_'+key] = (opt, dict_per_key) #opt object for future production envelope, info dict
-                print('res_opt =', result_opt)  
-                #remove_rlist(KI_list, model)
-            else:
-                target = 'EX_'+key+'_e'
-                print(target)
-                opt = []
-                j=1
-                dict_per_key = {}
-                while j <= 6:
-                    print('Running OptKnock . . .')
-                    knock, info_dictionary = Run_OptKnock(model,target, j, KO_cand = candidates, verbose=True)
-                    opt += [knock] # it should already print stuff but I want also to recod the info in a dictionary/model
-                    dict_per_key[j] = info_dictionary
-                    print(dict_per_key)
-                    j = j+1
-                result_opt[str(n)+'_'+key] = (opt, dict_per_key) #opt object for future production envelope, info dict
-                print('res_opt =', result_opt)  
-                #remove_rlist(KI_list, model)
+            KI_model = values[7]
+            #for exchange, flux in values[3].items():
+            #    target = exchange
+            #KI_list = []
+            #for i in KI.keys():
+            #    KI_list.append(i)
+            #    r = universal.reactions.get_by_id(i)
+            #    model.add_reaction(r)
+            #logging.debug(KI_list)
+            for exchange, flux in values[3].items():
+                target = exchange
+            opt = []
+            j=1
+            dict_per_key = {}
+            while j <= 12:
+                print('Running OptKnock . . .')
+                knock, info_dictionary = Run_OptKnock(KI_model,target, j, KO_cand = candidates, verbose=True)
+                opt += [knock] # it should already print stuff but I want also to recod the info in a dictionary/model
+                dict_per_key[j] = info_dictionary
+                print(dict_per_key)
+                j = j+1
+            result_opt[str(n)+'_'+key] = (opt, dict_per_key) #opt object for future production envelope, info dict
+            print('res_opt =', result_opt)  
+            #remove_rlist(KI_list, model)
         per_cons_var[n]=result_opt
     return per_cons_var
 
@@ -135,13 +118,11 @@ def production_env_KO_eval(input_file, model, universal, output_optknock, output
     the reactions knock-ins and the variants that also include reaction
     knock-outs (KOs).
     
-    The output is a the list of fluxes thought the exchange reaction of the
-    target when the biomass reaction is increasingly limited in its upper
-    bound. These results are obtained for each max allowed knock-out and for
-    the model variant with only reaction addition too. 
-
-    This information is also provided in the form of txt files found in the
-    pipeline folder.
+    The output is a pandas.Dataframe object. When run in a python 
+    interpreter like jupyter notebook the DataFrame can be accessed
+    and used to visualize the production envelope plots. This pipeline
+    doesn't provide a function for plotting those data, but indipendent
+    packages can be found for that purpose.
     -----------------------------------------------------------------
     input_file--str input file in .csv format dictionary like
     model--cobra.Model reference model in BiGG namespace

@@ -22,9 +22,9 @@ import csv
 import numpy
 from matplotlib import pyplot as plt
 
-from pipeline.scripts.analysis import *
+from scripts.analysis import *
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 def read_weights(input_file):
     """
@@ -347,7 +347,7 @@ def generate_scores(input_file, output_consumption, output_con_and_prod):
     ranges_per_criteria = generate_dict_ranges_per_criteria(ranges)
     logging.debug(ranges_per_criteria)
 
-    with open('./pipeline/outputs/partof_summary_output.csv', 'w', newline='') as csvfile:
+    with open('./outputs/partof_summary_output.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["model_name", 
                         "criteria", 
@@ -432,7 +432,6 @@ def generate_scores(input_file, output_consumption, output_con_and_prod):
                                 scores_consumption[c]=score
                                 list_single_scores.append(score)
                                 logging.debug(score)
-                    logging.debug(scores_consumption)
                         
                     logging.debug('production')
                     scores_production={}

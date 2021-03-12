@@ -21,12 +21,12 @@ from cobra.flux_analysis import phenotype_phase_plane
 from cobra.flux_analysis import gapfill
 import csv
 
-from pipeline.scripts.input_parser import main, get_metabolites, get_reactions, set_bounds_ex
-from pipeline.scripts.path_definition_mdf import * 
-from pipeline.scripts.import_models import get_ID_reference_model, get_expression_host
+from scripts.input_parser import main, get_metabolites, get_reactions
+from scripts.path_definition_mdf import * 
+from scripts.import_models import get_ID_reference_model, get_expression_host
 
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 #import warnings
 
 #warnings.filterwarnings('error', category=UserWarning, module='analysis.py')
@@ -156,7 +156,7 @@ def get_max_growth_on_preferred_c(input_file, model):
         fba_pref_source = model.optimize()
         for i in model.reactions:
             if i.flux <= -0.5 and "EX_" in i.id:
-                print(i.id, i.reaction, i.flux, '\n')
+                print(i.id, i.reaction, i.flux)
         ub_biomass = fba_pref_source.objective_value
         logging.debug(ub_biomass)
         uptake_reaction.lower_bound = 0
@@ -165,20 +165,18 @@ def get_max_growth_on_preferred_c(input_file, model):
     return ub_biomass
 
 
-def set_bounds_obj(input_file, model, universal):
+def set_bounds_obj(input_file, model):
     """
-    Set upper bound of biomass reaction and the lb of the uptake reaction for optimization of consumption
+    Set upper bound of biomass reaction for optimization of consumption
 
     It uses the float value resulting from get_max_growth_on_preferred_c
     function as upper bounds of biomass. Growth is then constrained to 
     a maximum that equals the upper bound, hence the consumption rate
-    of the desired compound can be recorded. Additionally, the lb of the 
-    exchange reaction of the selected carbon source is set to -1000.
+    of the desired compound can be recorded. 
     --------------------------------------------------------
     Arguments:
     input_file--str input file in .csv format dictionary like
     model--cobra.Model reference model in BiGG namespace
-    universal--cobra.Model universal model in BiGG namespace
     """
     biomass = get_biomass_equation(model) 
     metabolites = get_metabolites(input_file)
@@ -198,7 +196,7 @@ def set_bounds_obj(input_file, model, universal):
         #        elif metab in row['metabolite_BiGG_ID'] and row['carbon_source']=='yes' and row['consumption']!='yes' and row['consumption']!='no':
         #            continue 
         print('New biomass (objective) bounds = ', biomass.bounds)
-        
+        #TODO: remove the setting of the lb of the selected C to -1000 from input_parser (set_bounds_ex) and set the bounds in here
         for i in metabolites:
 
             if ('EX_' + i + '_e') in model.reactions:
@@ -518,7 +516,7 @@ def generate_output_file(processed_output):
     Return:
     saves a csv file with the idicated name
     """
-    with open('pipeline/outputs/consumption.csv', 'w', newline='') as csvfile:
+    with open('./outputs/consumption.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([
             'model_version', 'growth_rate', 
@@ -576,11 +574,11 @@ def analysis_gf_sol(input_file, model, universal):
         for optimized consumption. 
     """
     metabolites = get_metabolites(input_file)
-    #for metab in metabolites:
-      #  r = model.reactions.get_by_id('EX_'+metab+'_e')
-        #print(r.id, " | ", r.reaction, " | ", r.bounds)
+    for metab in metabolites:
+        r = model.reactions.get_by_id('EX_'+metab+'_e')
+        print(r.id, " | ", r.reaction, " | ", r.bounds)
     
-    set_bounds_obj(input_file, model, universal) # Onyl biomass is constrained by setting ub = growth on preferred substrate
+    set_bounds_obj(input_file, model) # Onyl biomass is constrained by setting ub = growth on preferred substrate
     #shut_down_c_sources(input_file, model)
     output = eval_sol(input_file, model, universal)
     sol_for_csv = remove_duplicated_sol(output)
@@ -669,6 +667,8 @@ def production_analysis(input_file, model, universal):
     input_file--str input file in .csv format dictionary like
     model--cobra.Model reference model in BiGG namespace
     universal--cobra.Model universal model in BiGG namespace
+    TODO: delete argument sol_consumption--list of BiGG IDs of reactions found as solutions of
+       GapFilling for optimized growth on the indicated source.
 
     Return:
     dict_products: dict with the reactions resulting from GapFilling
@@ -765,7 +765,7 @@ def set_constraint_production(input_file, model):
     #get expression host model BiGG ID
     model_ID = get_ID_reference_model(input_file)
 
-    with open('pipeline/outputs/detailed_output.csv', 'w', newline='') as csvfile:
+    with open('./outputs/detailed_output.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([
             'constraints_consumption', 'constraints_production',
@@ -864,10 +864,6 @@ def cons_prod_dict(input_file, model, universal, sol_cons, sol_prod):
     """
     Create a dictionary with the reactions knock-ins for both optimizations
 
-    If the model can already grow on the selected carbon source and or 
-    produce the indicate target, the dictionary will be generated with the 
-    fluxes derived from the optimization without the need of the addition 
-    of any reaction. 
     -----------------------------------------
     Arguments:
     input_file--str input file in .csv format dictionary like
@@ -954,7 +950,7 @@ def cons_prod_dict(input_file, model, universal, sol_cons, sol_prod):
                     # thermodynamic analysis
                     # make a copy of the model
                     mthermo = deepcopy(model) 
-                    mdf_value, path_length = mdf_analysis(input_file, mthermo, './pipeline/outputs/{}_Run_{}.tsv'.format(target, str(n+1)), './pipeline/outputs/input_mdf_{}_Run_{}.tsv'.format(target, str(n+1)))
+                    mdf_value, path_length = mdf_analysis(input_file, mthermo, './outputs/{}_Run_{}.tsv'.format(target, str(n+1)), './outputs/input_mdf_{}_Run_{}.tsv'.format(target, str(n+1)))
                     thermodynamic = {} 
                     if mdf_value == None:
                         thermodynamic['mdf'] = mdf_value
@@ -998,7 +994,7 @@ def cons_prod_dict(input_file, model, universal, sol_cons, sol_prod):
             # make a copy of the model
             mthermo = deepcopy(model) 
             for target in to_produce:
-                mdf_value, path_length = mdf_analysis(input_file, mthermo, './pipeline/outputs/{}_formdf.tsv'.format(target), './pipeline/outputs/final_input_mdf_{}.tsv'.format(target))
+                mdf_value, path_length = mdf_analysis(input_file, mthermo, './outputs/{}_formdf.tsv'.format(target), './outputs/final_input_mdf_{}.tsv'.format(target))
                 thermodynamic = {} 
                 if mdf_value == None:
                     thermodynamic['mdf'] = mdf_value

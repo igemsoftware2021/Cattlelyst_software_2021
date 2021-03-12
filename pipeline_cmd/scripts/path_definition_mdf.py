@@ -32,7 +32,7 @@ from equilibrator_cache.exceptions import (
 from cobra.exceptions import (
     OPTLANG_TO_EXCEPTIONS_DICT, Infeasible, OptimizationError, SolverNotFound)
 
-from pipeline.scripts.input_parser import *
+from scripts.input_parser import *
 
 def get_ex_c_source_metab(input_file, model):
     """
@@ -499,8 +499,8 @@ def whole_procedure_path_definition(input_file, model, raw_tsv_file_name, input_
     substrate.bounds = old_bounds[0]
     target.bounds = old_bounds[1]
 
-    #biomass = get_biomass_equation(model)
-    #model.objective = biomass
+    biomass = get_biomass_equation(model)
+    model.objective = biomass
 
     if new_r_list != None:
         generate_SB_tab(input_file, model, new_r_list, raw_tsv_file_name, input_mdf_filename)
@@ -657,7 +657,7 @@ def config_SB_tab(raw_tsv_file_name, input_mdf_filename):
     raw_tsv_file_name--str of the intermediate .tsv SBtab file
     input_mdf_filename--str of the .tsv SBtab file for mdf analysis
     """
-    Sd_config = SBtab.read_csv('./pipeline/inputs/configuration.tsv', 'Sd_config', xlsx=False)
+    Sd_config = SBtab.read_csv('configuration.tsv', 'Sd_config', xlsx=False)
     tab_config = Sd_config.get_sbtab_by_id('Configuration')
 
     # create an SBtab Document Object Sd
