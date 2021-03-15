@@ -1,0 +1,27 @@
+Pipeline run at the following date and time:
+15/03/2021 11:34:49
+
+The input was:
+./inputs/putida_wt_ac.csv
+Path to file:
+./inputs./inputs/putida_wt_ac.csv
+
+System network name:
+LAPTOP-PG6VN22I
+Platform information:
+Windows-10-10.0.19041-SP0
+
+Python version:
+3.6.10 |Anaconda, Inc.| (default, May  7 2020, 19:46:08) [MSC v.1916 64 bit (AMD64)]
+Cobrapy version:
+0.18.1
+
+Aside from this data_provenance.txt file,
+The following output files can be found 
+in the current repository (pipeline/ouptuts/<filename>):
+
+            - summary_output.csv
+            - detailed_output.csv
+            - consumption.csv
+            - metabolic_detailed_output.csv
+            - partof_summary_output.csv

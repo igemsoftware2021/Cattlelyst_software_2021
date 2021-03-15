@@ -89,17 +89,14 @@ def main_whole_analysis(argv):
 
     print(consumption)
 
-    #model.remove_reactions(['LCADi']) # TODO: delete this line in final version
-
     production = dict_prod_sol(inputs.input_file, consumption, model, universal)
 
-    # Get overall solutions from GapFilling analysis, hence the 
-    # different strategies
+    # Get overall solutions from GapFilling analysis, hence the different strategies
     final = cons_prod_dict(inputs.input_file, model, universal, consumption, production)
     # Score the metabolic engineering strategies
-    scores_output = scores_evaluations(inputs.input_file, consumption, final)
+    #scores_output = scores_evaluations(inputs.input_file, consumption, final)
     # Formatting information for wikidata query   
-    to_wikidata = output_for_biobrick_search(universal, scores_output, final)
+    #to_wikidata = output_for_biobrick_search(universal, scores_output, final)
     # TODO: add call Riemer's script to get from_wiki    
     # Score Biobrick presence
     ##scores_BB = score_BB_presence(inputs.input_file, to_wikidata, from_wiki, scores_output)
