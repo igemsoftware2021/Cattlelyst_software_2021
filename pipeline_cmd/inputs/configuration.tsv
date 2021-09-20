@@ -1,8 +1,0 @@
-!!SBtab TableID='Configuration' TableType='Config'			
-!Option	!Value	!Comment	
-algorithm	MDF	ECM, or MDF	
-p_h	7.5		
-ionic_strength	100 mM		
-p_mg	3		
-stdev_factor	1.96
-

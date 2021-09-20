@@ -1,0 +1,23 @@
+[build-system]
+
+requires = [
+    "setuptools",
+    "wheel",
+    "cobra",
+    "sympy",
+    "scipy",    
+    "pandas",
+    "Bio",
+    "pulp",
+    "pkg_resources",
+    "tqdm",
+    "cvxpy==1.1.6",
+    "sbtab",
+    "equilibrator_api",
+    "equilibrator_pathway",
+    "equilibrator_cache",
+    "matplotlib",
+    "numpy"
+]
+
+build-backend = "setuptools.build_meta"
