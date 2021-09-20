@@ -23,7 +23,7 @@ from datetime import datetime
 
 from pipeline.scripts.analysis import get_c_source
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 def summary_output(scores_output, scores_bb, out_opt=None):
     """

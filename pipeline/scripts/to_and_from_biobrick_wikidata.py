@@ -28,7 +28,7 @@ from pipeline.scripts.codon_harmonizer_RSs import (read_reference_freq,
                             read_fasta_file, harmonize_gene,
                             RS_check, calculate_CHI, format_fasta)
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 # To biobrick wikidata 
 

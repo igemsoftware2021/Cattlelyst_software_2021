@@ -1,0 +1,8 @@
+model_version,growth_rate,reactions_added,fluxes,c-source_exchange,c-source_flux,non_c_reactions,non_c_flux
+Model1,0.87,ALCD1,131.2084655,EX_ch4_e,-131.2084637,EX_nh4_e,-9.39592605
+,,R01143,131.2084637,,,EX_lac__L_e,0
+Model2,0.87,ALCD1,87.47231089,EX_ch4_e,-87.47230915,EX_nh4_e,-9.39592605
+,,MMO2,87.47230915,,,EX_lac__L_e,0
+Model3,0.079063826,POX2,6.828205063,EX_ch4_e,-500.5788291,EX_nh4_e,-0.853882596
+,,PRDX,500.5788292,,,EX_lac__L_e,0
+,,R01142,500.5788291,,,,

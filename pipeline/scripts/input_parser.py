@@ -16,7 +16,7 @@ from cobra import Model, Reaction, Metabolite
 import csv
 import sys
 import logging
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 
 def get_metabolites(input_file):
@@ -153,7 +153,7 @@ def add_transport_with_metabs_already_in_universal(input_file, metab, universal,
                             reaction.add_metabolites({m: coefficients[n]})
 
                         reaction.gene_reaction_rule = row['Reaction_gene_ (ID_ and/or)']
-                        model.add_reactions([reaction])
+                        model.add_reactions(reaction)
                         print('\nThe reaction {} has been added to E. coli model'.format(ID))
 
 
@@ -209,7 +209,7 @@ def add_transport_with_metabs_already_in_universal(input_file, metab, universal,
                         # Adding metabolites  already in uni to new reaction
                         for n in range(len(species)):
                             reaction.add_metabolites({model.metabolites.get_by_id(species[n]): coefficients[n]})
-                        model.add_reactions([reaction])
+                        model.add_reactions(reaction)
                         reaction.gene_reaction_rule = row['Reaction_gene_ (ID_ and/or)']
                         print('\nThe reaction {} has been added to the reference model'.format(ID))
                     else:
@@ -297,7 +297,7 @@ def add_reactions_new_metab(input_file, ID, universal, model):
                     for n in range(len(species)):
                         reaction.add_metabolites({universal.metabolites.get_by_id(species[n]): coefficients[n]})
                     
-                    universal.add_reactions([reaction])
+                    universal.add_reactions(reaction)
                     reaction.gene_reaction_rule = row['Reaction_gene_ (ID_ and/or)']
                     print('\nThe reaction {} has been added to the universal model'.format(ID))
 
@@ -374,6 +374,7 @@ def set_bounds_ex(input_file, model, metab):
                         print('Exchange {}: '.format(metab), exchange.reaction, 'Old bounds: ', exchange.bounds)
                         exchange.lower_bound = -1000
                         exchange.upper_bound = 0
+                        print('Exchange {}: '.format(metab), exchange.reaction, 'New bounds: ', exchange.bounds)
                     elif (row['consumption'] not in ('yes', 'Yes', 'Y', 'y', 'YES') and 
                             row['consumption'] != '' and 
                             row['production'] in ('No', 'no', 'NO', 'N', 'n') and 
@@ -382,6 +383,7 @@ def set_bounds_ex(input_file, model, metab):
                         print('Exchange {}: '.format(metab), exchange.reaction, 'Old bounds: ', exchange.bounds)
                         exchange.lower_bound = -1000
                         exchange.upper_bound = 0
+                        print('Exchange {}: '.format(metab), exchange.reaction, 'New bounds: ', exchange.bounds)
                     elif (row['production'] in ('yes', 'Yes', 'Y', 'y', 'YES') and 
                             row['consumption'] in ('No', 'no', 'NO', 'N', 'n') and 
                             metab in row['metabolite_BiGG_ID']):
@@ -389,13 +391,16 @@ def set_bounds_ex(input_file, model, metab):
                         print('Exchange {}: '.format(metab), exchange.reaction, 'Old bounds: ', exchange.bounds)
                         exchange.lower_bound = 0
                         exchange.upper_bound = 1000
+                        print('Exchange {}: '.format(metab), exchange.reaction, 'New bounds: ', exchange.bounds)
                     elif (row['production'] not in ('yes', 'Yes', 'Y', 'y', 'YES') and 
                             row['production'] != '' and 
                             row['consumption'] in ('No', 'no', 'NO', 'N', 'n') and 
                             metab in row['metabolite_BiGG_ID']):
                         exchange = model.reactions.get_by_id('EX_' + metab + '_e')
+                        print('Exchange {}: '.format(metab), exchange.reaction, 'Old bounds: ', exchange.bounds)
                         exchange.lower_bound = 0
                         exchange.upper_bound = 1000
+                        print('Exchange {}: '.format(metab), exchange.reaction, 'New bounds: ', exchange.bounds)
                     #else:
                         #continue
 
@@ -424,29 +429,7 @@ def main(input_file, universal, model):
         reader = csv.DictReader(csvfile, dialect='excel')
         metabolites = get_metabolites(input_file)  # Function
         # check if the metabolites is in the medium and if not add exchange
-        for i in metabolites:
-
-            if ('EX_' + i + '_e') in model.reactions:
-                print('\n{} is in the medium'.format(i), '\n')
-            elif ('EX_' + i + '_e') not in model.reactions:
-                print('\n{} is not in the medium'.format(i), '\n')
-                if ('EX_' + i + '_e') in universal.reactions:
-                    exchange = universal.reactions.get_by_id('EX_' + i + '_e')
-                    exchange.lower_bound = -1000
-                    exchange.upper_bound = 0
-                    model.add_reaction(exchange)
-                else:
-                    extracellular = Metabolite(i + '_e')
-                    extracellular = Metabolite(i + '_e', name='extracellular' + i, compartment='e')
-                    exch = Reaction('EX_' + i + '_e')
-                    exch.name = 'Exchange {}'.format(extracellular)
-                    exch.lower_bound = -1000
-                    exch.upper_bound = 0
-                    exch.add_metabolites({extracellular: -1})
-                    model.add_reaction(exch)
-                    print('Ther reaction {} has been added to the reference model, hence {} is now in the medium'.format(
-                            'EX_' + i + '_e', i + '_e'))
-            set_bounds_ex(input_file, model, i)
+        
             #elif row['production'] != "":
                 
                 #if ('EX_' + i + '_e') in model.reactions:
@@ -497,34 +480,34 @@ def main(input_file, universal, model):
                     continue
             if len(solution) == 0:  # if reactions not in reference model checks if they are in universal.
                 print("For {} there isn't any uptake trasnsporter in the reference model".format(metab))  # FIX/IMPROVE!
-                if (metab + "_e") in [i.reaction for i in universal.reactions] and (metab + '_c') in [i.reaction for i
-                                                                                                      in
-                                                                                                      universal.reactions]:
-                    uptake = universal.reactions.get_by_id(i.id)
-                    if uptake.get_coefficient((metab + '_c')) > 0:
-                        print(
-                            '\nFor {} there is a transport reaction in the universal model for the uptake from the extracellular space: '.format(
-                                metab),
-                            '\nReaction ID: ', i.id,
-                            '\nReaction equation: ', i.reaction)
-                        model.add_reaction([uptake])
-                elif (metab + "_p") in [i.reaction for i in universal.reactions] and (metab + '_c') in [i.reaction for i
-                                                                                                      in
-                                                                                                      universal.reactions]:
-                    uptake = universal.reactions.get_by_id(i.id)
-                    if uptake.get_coefficient((metab + '_c')) > 0:
-                        print(
-                            '''\nFor {} there is a transport reaction 
-                                in the universal model for the uptake 
-                                from the periplasm: '''.format(metab),
-                            '\nReaction ID: ', i.id,
-                            '\nReaction equation: ', i.reaction, '\n')
-                        model.add_reaction([uptake])
+                transporter = 0
+                for i in universal.reactions:
+                    if (metab + "_e") in i.reaction and (metab + '_c') in i.reaction:
+                        uptake = universal.reactions.get_by_id(i.id)
+                        if uptake.get_coefficient((metab + '_c')) > 0:
+                            print(
+                                '\nFor {} there is a transport reaction in the universal model for the uptake from the extracellular space: '.format(
+                                    metab),
+                                '\nReaction ID: ', i.id,
+                                '\nReaction equation: ', i.reaction)
+                            model.add_reaction(uptake)
+                            transporter+=1
+                    elif (metab + "_p") in i.reaction and (metab + '_c') in i.reaction:
+                        uptake = universal.reactions.get_by_id(i.id)
+                        if uptake.get_coefficient((metab + '_c')) > 0:
+                            print(
+                                '''\nFor {} there is a transport reaction 
+                                    in the universal model for the uptake 
+                                    from the periplasm: '''.format(metab),
+                                '\nReaction ID: ', i.id,
+                                '\nReaction equation: ', i.reaction, '\n')
+                            model.add_reaction(uptake)
+                            transporter+=1
 
                 # elif [(metab+'e') in row['Reaction_equation'] and (metab+'c') in row['Reaction_equation']] or [(metab+'p') in row['Reaction_equation'] and (metab+'c') in row['Reaction_equation']]:
                 #   add_transport_with_metabs_already_in_universal(input_file, metab)
 
-                else:  # if they are not in the universal it checks if they are in the input file and if so add them
+                if transporter == 0:  # if they are not in the universal it checks if they are in the input file and if so add them
                     for row in reader:
                         if (metab+'_e' in row['Reaction_equation'] and
                             metab+'_p' in row['Reaction_equation']) or(
