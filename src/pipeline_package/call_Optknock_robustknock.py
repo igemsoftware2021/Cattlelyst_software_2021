@@ -29,21 +29,17 @@ import numpy as np
 import pandas as pd
 from cobra.util.solver import check_solver_status
 
-
 from cobra.flux_analysis import (
     single_gene_deletion, single_reaction_deletion, double_gene_deletion,
     double_reaction_deletion)
-
 
 import cobra as cb
 from copy import deepcopy
 from pulp import LpProblem, LpMaximize, LpMinimize, LpVariable, LpAffineExpression, \
                  LpContinuous, LpBinary, LpStatusOptimal, lpSum, LpStatus
-
-#  Optknock_robustknock 
                  
-from pipeline.scripts.Optknock_robustknock import OptAndRob
-from pipeline.scripts.analysis import get_biomass_equation # added by Delielena Poli in date 20/09/2020 for compatibility with pipeline
+from pipeline_package.Optknock_robustknock import OptAndRob
+from pipeline_package.analysis import get_biomass_equation # added by Delielena Poli in date 20/09/2020 for compatibility with pipeline
 
 def list_excluded_reactions(model):
 	"""

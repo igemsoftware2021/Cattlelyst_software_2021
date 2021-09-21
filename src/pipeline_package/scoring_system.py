@@ -22,7 +22,7 @@ import csv
 import numpy
 from matplotlib import pyplot as plt
 
-from pipeline.scripts.analysis import *
+from pipeline_package.analysis import *
 
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 

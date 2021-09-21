@@ -28,9 +28,9 @@ from cobra.util.solver import check_solver_status
 from cobra.exceptions import (
     OPTLANG_TO_EXCEPTIONS_DICT, Infeasible, OptimizationError, SolverNotFound)
  
-from pipeline.scripts.call_Optknock_robustknock import list_excluded_reactions                 
-from pipeline.scripts.Optknock_robustknock import Run_OptKnock
-from pipeline.scripts.analysis import (remove_rlist, get_biomass_equation, 
+from pipeline_package.call_Optknock_robustknock import list_excluded_reactions                 
+from pipeline_package.Optknock_robustknock import Run_OptKnock
+from pipeline_package.analysis import (remove_rlist, get_biomass_equation, 
                     get_ex_c_source_metab, get_production_objectives)
 
 

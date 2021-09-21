@@ -32,7 +32,7 @@ from equilibrator_cache.exceptions import (
 from cobra.exceptions import (
     OPTLANG_TO_EXCEPTIONS_DICT, Infeasible, OptimizationError, SolverNotFound)
 
-from pipeline.scripts.input_parser import *
+from pipeline_package.input_parser import *
 
 def get_ex_c_source_metab(input_file, model):
     """

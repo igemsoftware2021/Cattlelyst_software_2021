@@ -21,9 +21,9 @@ from cobra.flux_analysis import phenotype_phase_plane
 from cobra.flux_analysis import gapfill
 import csv
 
-from pipeline.scripts.input_parser import main, get_metabolites, get_reactions, set_bounds_ex
-from pipeline.scripts.path_definition_mdf import * 
-from pipeline.scripts.import_models import get_ID_reference_model, get_expression_host
+from pipeline_package.input_parser import parser, get_metabolites, get_reactions, set_bounds_ex
+from pipeline_package.path_definition_mdf import * 
+from pipeline_package.import_models import get_ID_reference_model, get_expression_host
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)

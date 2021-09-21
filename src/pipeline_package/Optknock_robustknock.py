@@ -39,8 +39,7 @@ import logging, sys
 from cobra.core.solution import Solution  # I replaced by solution in small letters
 from cobra.exceptions import Infeasible
 
-
-from pipeline.scripts.analysis import get_biomass_equation
+from pipeline_package.analysis import get_biomass_equation
 
 logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
