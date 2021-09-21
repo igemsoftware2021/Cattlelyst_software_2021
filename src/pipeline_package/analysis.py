@@ -518,7 +518,7 @@ def generate_output_file(processed_output):
     Return:
     saves a csv file with the idicated name
     """
-    with open('pipeline/outputs/consumption.csv', 'w', newline='') as csvfile:
+    with open('../outputs/consumption.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([
             'model_version', 'growth_rate', 
@@ -765,7 +765,7 @@ def set_constraint_production(input_file, model):
     #get expression host model BiGG ID
     model_ID = get_ID_reference_model(input_file)
 
-    with open('pipeline/outputs/detailed_output.csv', 'w', newline='') as csvfile:
+    with open('../outputs/detailed_output.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([
             'constraints_consumption', 'constraints_production',
@@ -954,7 +954,7 @@ def cons_prod_dict(input_file, model, universal, sol_cons, sol_prod):
                     # thermodynamic analysis
                     # make a copy of the model
                     mthermo = deepcopy(model) 
-                    mdf_value, path_length = mdf_analysis(input_file, mthermo, './pipeline/outputs/{}_Run_{}.tsv'.format(target, str(n+1)), './pipeline/outputs/input_mdf_{}_Run_{}.tsv'.format(target, str(n+1)))
+                    mdf_value, path_length = mdf_analysis(input_file, mthermo, '../outputs/{}_Run_{}.tsv'.format(target, str(n+1)), '../outputs/input_mdf_{}_Run_{}.tsv'.format(target, str(n+1)))
                     thermodynamic = {} 
                     if mdf_value == None:
                         thermodynamic['mdf'] = mdf_value
@@ -998,7 +998,7 @@ def cons_prod_dict(input_file, model, universal, sol_cons, sol_prod):
             # make a copy of the model
             mthermo = deepcopy(model) 
             for target in to_produce:
-                mdf_value, path_length = mdf_analysis(input_file, mthermo, './pipeline/outputs/{}_formdf.tsv'.format(target), './pipeline/outputs/final_input_mdf_{}.tsv'.format(target))
+                mdf_value, path_length = mdf_analysis(input_file, mthermo, '../outputs/{}_formdf.tsv'.format(target), '../outputs/final_input_mdf_{}.tsv'.format(target))
                 thermodynamic = {} 
                 if mdf_value == None:
                     thermodynamic['mdf'] = mdf_value

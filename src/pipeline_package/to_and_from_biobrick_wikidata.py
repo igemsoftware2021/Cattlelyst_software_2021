@@ -23,8 +23,8 @@ import os
 import wget
 import logging, sys
 
-from import_models import get_expression_host
-from codon_harmonizer_RSs import (read_reference_freq,
+from pipeline_package.import_models import get_expression_host
+from pipeline_package.codon_harmonizer_RSs import (read_reference_freq,
                             read_fasta_file, harmonize_gene,
                             RS_check, calculate_CHI, format_fasta)
 
